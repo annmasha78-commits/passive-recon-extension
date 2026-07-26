@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Passive Recon .2</title>
+  <link rel="stylesheet" href="popup.css">
+  <script src="chart.umd.js"></script>
+  <script src="jspdf.umd.min.js"></script>
+  <script src="jspdf.plugin.autotable.min.js"></script>
+</head>
+
+<body>
+  <header>
+    <h1><span class="glitch">Passive</span> <span class="highlight">Recon .2</span></h1>
+    <p id="current-url">Loading...</p>
+    <button id="btn-detach" class="icon-btn" title="Detach for Screen Recording">⏺ Record Mode</button>
+  </header>
+
+  <nav>
+    <button class="tab-btn active" data-target="tab-info">Info</button>
+    <button class="tab-btn" data-target="tab-osint">OSINT Tools</button>
+    <button class="tab-btn" data-target="tab-extract">Extractor</button>
+    <button class="tab-btn" data-target="tab-report">Report</button>
+    <button class="tab-btn" data-target="tab-settings">Settings</button>
+  </nav>
+
+  <main>
+    <!-- Server & Header Info Tab -->
+    <section id="tab-info" class="tab-content active">
+      <div class="card">
+        <h3>Server Details</h3>
+        <p><strong>Domain:</strong> <span id="info-domain">N/A</span></p>
+        <p><strong>Server IP:</strong> <span id="info-ip">Fetching...</span></p>
+        <p><strong>Title:</strong> <span id="info-title">N/A</span></p>
+        <p><strong>ISP:</strong> <span id="info-isp">N/A</span></p>
+        <p><strong>Organization:</strong> <span id="info-org">N/A</span></p>
+        <p><strong>OS:</strong> <span id="info-os">N/A</span> <span id="help-os" style="cursor:help; font-size:10px; color:#ffcc00; display:none;" title="OS cannot be guessed passively because the server hides its identity. A Shodan API key is required to actively detect it.">ⓘ</span></p>
+        <p><strong>Location:</strong> <span id="info-location">N/A</span></p>
+        <p><strong>Server Header:</strong> <span id="info-server-header">N/A</span> <span id="help-server" style="cursor:help; font-size:10px; color:#ffcc00; display:none;" title="The server is intentionally hiding its 'Server' header to prevent fingerprinting and security scanning.">ⓘ</span></p>
+        <p><strong>Open Ports:</strong> <span id="info-ports">Scanning...</span></p>
+      </div>
+
+      <div class="card">
+        <h3>Advanced Subdomain & DNS Recon</h3>
+        <p><strong>TXT Records:</strong> <span id="info-dns-txt" style="display:block; word-break:break-all; background:#0a0a0a; padding:5px; border:1px solid #333; margin-top:3px; font-size:10px;">Fetching...</span></p>
+        <p><strong>Discovered Subdomains (<span id="info-sub-count">0</span>):</strong></p>
+        <div id="info-subdomains" style="max-height: 100px; overflow-y: auto; background: #0a0a0a; padding: 5px; font-size: 11px; border: 1px solid #333; margin-top: 5px; word-break: break-all;">
+           Scanning...
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Security Headers <button id="btn-refresh-headers" class="action-btn" title="Reload page to capture headers"
+            style="font-size:10px;padding:3px 8px;margin-left:8px;vertical-align:middle;">⟳ Refresh</button></h3>
+        <ul id="header-list" class="tech-list">
+          <li class="loading">Analyzing Headers...</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h3>Detected Technologies</h3>
+        <ul id="tech-list" class="tech-list">
+          <li class="loading">Scanning DOM/Headers...</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h3>🌐 DNS Intelligence</h3>
+        <div id="dns-intel-content" style="font-size:11px;">
+          <p style="margin:2px 0;"><strong>MX (Mail Servers):</strong> <span id="dns-mx" style="color:#00ff41;">Fetching...</span></p>
+          <p style="margin:2px 0;"><strong>NS (Nameservers):</strong> <span id="dns-ns" style="color:#00ff41;">Fetching...</span></p>
+          <p style="margin:2px 0;"><strong>CNAME:</strong> <span id="dns-cname" style="color:#aaa;">Fetching...</span></p>
+          <p style="margin:2px 0;"><strong>IPv6 (AAAA):</strong> <span id="dns-aaaa" style="color:#aaa;">Fetching...</span></p>
+          <div id="dns-intel-hints" style="display:none;margin-top:6px;padding:6px;background:#0a0a0a;border:1px solid #1a1a1a;border-radius:4px;font-size:10px;color:#aaa;"></div>
+        </div>
+      </div>
+
+
+      <div class="card">
+        <h3>Passive Vulnerability Indicators</h3>
+        <ul id="pvi-list" class="tech-list">
+          <li class="loading">Scanning passively...</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h3>Quick Navigation</h3>
+        <div class="link-grid">
+          <button class="action-btn jump-link" data-jump="tab-osint">Go to OSINT Tools</button>
+          <button class="action-btn jump-link" data-jump="tab-extract">Go to Extractor</button>
+          <button class="action-btn jump-link" data-jump="tab-report">Go to Report</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- OSINT Tools Tab -->
+    <section id="tab-osint" class="tab-content">
+      <div class="card">
+        <h3>DNS & Infrastructure</h3>
+        <div class="link-grid" id="links-dns"></div>
+      </div>
+      <div class="card">
+        <h3>Subdomains & Discovery</h3>
+        <div class="link-grid" id="links-subs"></div>
+      </div>
+      <div class="card">
+        <h3>People & Social (OSINT)</h3>
+        <div class="link-grid" id="links-social"></div>
+      </div>
+      <div class="card">
+        <h3>Maltego-Style / Advanced Pivot</h3>
+        <div class="link-grid" id="links-advanced"></div>
+      </div>
+    </section>
+
+    <!-- Content Extractor Tab -->
+    <section id="tab-extract" class="tab-content">
+      <div class="card">
+        <h3>Extracted Emails <span class="badge" id="email-count">0</span> <span id="api-status-hunter"
+            class="status-muted" style="font-size: 10px; margin-left: 10px;"></span></h3>
+        <textarea id="extracted-emails" readonly placeholder="No emails found on page..."></textarea>
+      </div>
+
+      <div class="card">
+        <h3>📞 Phone Numbers <span class="badge" id="phone-count">0</span></h3>
+        <ul id="phone-list" class="tech-list" style="margin-top: 5px;">
+          <li class="status-muted">Scanning for tel: links and numbers...</li>
+        </ul>
+        <div id="phone-osint-hints" style="display:none; margin-top: 8px; padding: 8px; background:#0a0a0a; border:1px solid #333; font-size:10px; color:#aaa; border-radius:4px;">
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Extracted Links</h3>
+        <p>Internal: <span id="internal-link-count">0</span> | External: <span id="external-link-count">0</span></p>
+        <div style="display: flex; gap: 5px;">
+          <button id="btn-copy-links" class="action-btn" style="flex: 1;">Copy External Links</button>
+          <button class="action-btn jump-link status-muted" data-jump="tab-info" style="flex: 1;">Back to Info</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Report Generate Tab -->
+    <section id="tab-report" class="tab-content">
+      <div class="card">
+        <h3>Export Report</h3>
+        <div class="export-grid" style="margin-bottom: 10px;">
+          <button id="btn-export-pdf" class="action-btn">Download PDF</button>
+          <button id="btn-export-json" class="action-btn">Download JSON</button>
+          <button id="btn-export-csv" class="action-btn">Download CSV</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Security Headers Summary</h3>
+        <div style="width: 150px; height: 150px; margin: 0 auto;">
+          <canvas id="headerChart"></canvas>
+        </div>
+      </div>
+      
+      <div class="card" id="full-report-summary">
+        <h3>Full Report & Suggestions</h3>
+        <div id="report-summary-content" style="font-size: 12px; max-height: 250px; overflow-y: auto; text-align: left; background: #0a0a0a; padding: 10px; border-radius: 5px; border: 1px solid #333;">
+           Report data will appear here...
+        </div>
+      </div>
+    </section>
+
+    <!-- Settings Tab -->
+    <section id="tab-settings" class="tab-content">
+      <div class="card">
+        <h3>API Keys</h3>
+        <p class="status-muted" style="margin-bottom: 10px; font-size: 12px;">Adding API keys unlocks direct fetching
+          within the extension. If left blank, features will gracefully skip or use external links.</p>
+
+
+
+        <div class="setting-group">
+          <label for="key-hunter">Hunter.io API Key (Optional):</label>
+          <input type="password" id="key-hunter" placeholder="Enter Hunter.io API key..." class="api-input">
+        </div>
+
+        <div class="setting-group">
+          <label for="key-shodan">Shodan API Key (Required for Port Scan):</label>
+          <input type="password" id="key-shodan" placeholder="Enter Shodan API key..." class="api-input">
+        </div>
+
+        <div class="setting-group">
+          <label for="key-intelx">IntelX API Key (Optional):</label>
+          <input type="password" id="key-intelx" placeholder="Enter IntelX API key..." class="api-input">
+        </div>
+
+        <button id="btn-save-keys" class="action-btn" style="margin-top: 10px; width: 100%;">Save Keys</button>
+        <span id="save-status"
+          style="display: block; text-align: center; margin-top: 5px; font-size: 12px; color: #00ff41;"></span>
+      </div>
+    </section>
+  </main>
+
+  <script src="popup.js"></script>
+</body>
+
+</html>

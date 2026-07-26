@@ -1,0 +1,51 @@
+{
+  "manifest_version": 3,
+  "name": "Passive Recon .2",
+  "version": "1.1",
+  "description": "Perform passive reconnaissance on any website. IP, Subdomains, Security Headers, OSINT links, PVI, and Report Export.",
+  "permissions": [
+    "activeTab",
+    "scripting",
+    "webRequest",
+    "storage",
+    "downloads",
+    "declarativeNetRequest"
+  ],
+  "options_page": "options.html",
+    "host_permissions": [
+      "<all_urls>",
+      "https://api.securitytrails.com/*",
+      "https://api.shodan.io/*",
+      "https://crt.sh/*",
+      "https://haveibeenpwned.com/api/v3/*"
+    ],
+  "declarative_net_request": {
+    "rule_resources": [
+      {
+        "id": "ruleset_1",
+        "enabled": true,
+        "path": "rules.json"
+      }
+    ]
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Passive Recon .2",
+    "default_icon": {
+      "16": "icon16.png",
+      "48": "icon48.png",
+      "128": "icon128.png"
+    }
+  },
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'"
+  },
+  "icons": {
+    "16": "icon16.png",
+    "48": "icon48.png",
+    "128": "icon128.png"
+  }
+}

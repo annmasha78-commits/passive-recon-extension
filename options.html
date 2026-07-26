@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Passive Recon – Advanced Options</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(12px);
+      margin: 0;
+      padding: 20px;
+      color: #222;
+    }
+    .card {
+      background: rgba(255, 255, 255, 0.8);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 16px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    h2 { margin-top:0; font-weight:600; }
+    label { display:block; margin:8px 0 4px; font-weight:500; }
+    input[type=text], input[type=password] { width:100%; padding:8px; border:1px solid #ccc; border-radius:4px; }
+    .toggle { margin-top:12px; }
+    button { background:#0066ff; color:#fff; border:none; padding:8px 12px; border-radius:4px; cursor:pointer; }
+    button:hover { background:#0052cc; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2>API Keys</h2>
+    <label for="securitytrailsKey">SecurityTrails API Key</label>
+    <input type="password" id="securitytrailsKey" placeholder="Enter key" />
+    <label for="shodanKey">Shodan API Key</label>
+    <input type="password" id="shodanKey" placeholder="Enter key" />
+    <label for="hibpKey">HaveIBeenPwned API Key (optional)</label>
+    <input type="password" id="hibpKey" placeholder="Enter key" />
+    <button id="saveKeys">Save Keys</button>
+  </div>
+  <div class="card">
+    <h2>Feature Toggles</h2>
+    <div class="toggle"><input type="checkbox" id="enableSubdomains" /> <label for="enableSubdomains">Enable Subdomain Enumeration</label></div>
+    <div class="toggle"><input type="checkbox" id="enableSSL" /> <label for="enableSSL">Enable SSL/TLS Analysis</label></div>
+    <div class="toggle"><input type="checkbox" id="enableTech" /> <label for="enableTech">Enable Technology Detection</label></div>
+    <div class="toggle"><input type="checkbox" id="enableOSINT" /> <label for="enableOSINT">Enable OSINT (Shodan, HIBP)</label></div>
+    <button id="saveToggles">Save Settings</button>
+  </div>
+  <script src="options.js"></script>
+</body>
+</html>
