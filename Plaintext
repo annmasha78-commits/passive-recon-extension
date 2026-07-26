@@ -1,0 +1,11 @@
+passive-recon-2/
+├── manifest.json                  # Manifest V3 Configuration & Permissions
+├── background.js                 # Service Worker (Request Interception & Traffic Inspection)
+├── content.js                    # DOM Inspector & On-page Recon Script
+├── popup.html / popup.js / .css  # Core Extension Dashboard UI & Controllers
+├── options.html / options.js     # Settings & Rule Configuration Panel
+├── rules.json                    # Declarative Net Request Rules
+├── generate_icons.py             # Python Asset Generator Script for PNG Icons
+├── chart.umd.js                  # Charting Engine for Visual Statistics
+├── jspdf.umd.min.js              # PDF Generation Library (Exporting Reports)
+└── jspdf.plugin.autotable.min.js # PDF Table Layout Extension
